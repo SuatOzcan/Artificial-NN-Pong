@@ -6,6 +6,7 @@ public class Brain : MonoBehaviour {
 
 	public GameObject paddle;
 	public GameObject ball;
+	public string backwallTag;
 	Rigidbody2D brb;
 	float yvel; //y velocity.
 	float paddleMinY = 8.8f;
@@ -54,7 +55,6 @@ public class Brain : MonoBehaviour {
 	void Update () {
 		float posy = Mathf.Clamp(paddle.transform.position.y + (yvel * Time.deltaTime * paddleMaxSpeed), paddleMinY, paddleMaxY);
 		paddle.transform.position = new Vector3(paddle.transform.position.x, posy, paddle.transform.position.z);
-		
 		List<double> output = new List<double>();
 		int layerMask = 1 << 8;
         RaycastHit2D hit = Physics2D.Raycast(ball.transform.position, brb.velocity, 1000, layerMask);
@@ -67,13 +67,14 @@ public class Brain : MonoBehaviour {
 				hit = Physics2D.Raycast(hit.point, reflection, 1000, layerMask);
 			}
 
-			if (hit.collider != null && hit.collider.gameObject.tag == "backwall")
+			if (hit.collider != null && hit.collider.gameObject.tag == backwallTag)
 			{
 				float dy = (hit.point.y - paddle.transform.position.y);
 				output = Run(ball.transform.position.x, ball.transform.position.y, brb.velocity.x, brb.velocity.y,
 							paddle.transform.position.x, paddle.transform.position.y, dy, true);
 				yvel = (float)output[0];
 			}
+
 		}
 		else
 		{
